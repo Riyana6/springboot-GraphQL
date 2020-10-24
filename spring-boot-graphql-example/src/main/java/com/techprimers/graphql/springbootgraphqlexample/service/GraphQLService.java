@@ -11,7 +11,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import graphql.GraphQL;
-import graphql.schema.DataFetcher;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
@@ -32,7 +31,7 @@ public class GraphQLService {
 
     // load schema at application start up
     @PostConstruct
-    public void loadSchema() throws IOException {
+    private void loadSchema() throws IOException {
         //get the schema
         File schemaFile = resource.getFile();
         //parse schema
@@ -47,9 +46,12 @@ public class GraphQLService {
         return RuntimeWiring.newRuntimeWiring()
                     .type("Query", typeWiring -> typeWiring
                                 .dataFetcher("allBooks" , allBooksDataFetcher)
-                                .dataFetcher("book", bookDataFetcher)
-                                .build())
+                                .dataFetcher("book", bookDataFetcher))
                     .build();
+    }
+
+    public GraphQL getGraphQL() {
+        return graphQL;
     }
 
 }
