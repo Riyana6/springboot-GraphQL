@@ -1,4 +1,4 @@
-package com.techprimers.graphql.springbootgraphqlexample.service;
+package com.techprimers.graphql.springbootgraphqlexample.resource;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
