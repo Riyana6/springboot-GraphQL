@@ -2,8 +2,11 @@ package com.techprimers.graphql.springbootgraphqlexample.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
+
+import com.techprimers.graphql.springbootgraphqlexample.repository.BookRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +25,8 @@ import graphql.schema.idl.TypeDefinitionRegistry;
 public class GraphQLService {
     @Value("classpath:books.graphql")
     Resource resource;
-
+    @Autowired
+    BookRepository bookRepository;
     private GraphQL graphQL;
     @Autowired
     private AllBooksDataFetcher allBooksDataFetcher;
@@ -32,6 +36,8 @@ public class GraphQLService {
     // load schema at application start up
     @PostConstruct
     private void loadSchema() throws IOException {
+        //load book into the bookrepository
+        loadDataIntoHSQL();
         //get the schema
         File schemaFile = resource.getFile();
         //parse schema
@@ -41,6 +47,24 @@ public class GraphQLService {
         graphQL = GraphQL.newGraphQL(schema).build();
 
     }
+
+    private void loadDataIntoHSQL(){
+        Stream.of(
+            new Book("123", "Book of Clouds", "Kindle Edition",
+                new String[] {
+                    "Chloe Aridis"
+                }, "Nov 2017"),
+            new Book("124", "Book of Asia", "Riya Edition",
+                new String[] {
+                    "Riya", "Saridis"
+                }, "JUN 2018"),
+            new Book("125", "Java", "Orielly",
+                new String[] {
+                    "Ben","Ram"
+                }, "DEC 2019")]
+        ).forEach(book -> {
+            bookRepository.save(book);
+        });
 
     private RuntimeWiring buildRuntimeWiring() {
         return RuntimeWiring.newRuntimeWiring()
